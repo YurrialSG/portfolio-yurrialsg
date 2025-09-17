@@ -12,176 +12,86 @@ export const BackgroundBeamsWithCollision = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = useState(0);
 
-  const beams = [
-    {
-      initialX: 10,
-      translateX: 10,
-      duration: 7,
-      repeatDelay: 3,
-      delay: 2,
-      className: "h-6",
-      color: "from-indigo-500 via-purple-500 to-transparent",
-    },
-    {
-      initialX: 100,
-      translateX: 100,
-      duration: 5,
-      repeatDelay: 2,
-      delay: 1,
-      className: "h-10",
-      color: "from-pink-500 via-red-500 to-transparent",
-    },
-    {
-      initialX: 200,
-      translateX: 200,
-      duration: 6,
-      repeatDelay: 4,
-      delay: 0,
-      className: "h-8",
-      color: "from-green-400 via-teal-400 to-transparent",
-    },
-    {
-      initialX: 300,
-      translateX: 300,
-      duration: 8,
-      repeatDelay: 3,
-      delay: 2,
-      className: "h-12",
-      color: "from-yellow-400 via-orange-400 to-transparent",
-    },
-    {
-      initialX: 400,
-      translateX: 400,
-      duration: 4,
-      repeatDelay: 5,
-      delay: 1,
-      className: "h-6",
-      color: "from-indigo-400 via-purple-400 to-transparent",
-    },
-    {
-      initialX: 500,
-      translateX: 500,
-      duration: 9,
-      repeatDelay: 2,
-      delay: 3,
-      className: "h-14",
-      color: "from-pink-300 via-red-300 to-transparent",
-    },
-    {
-      initialX: 600,
-      translateX: 600,
-      duration: 3,
-      repeatDelay: 3,
-      delay: 4,
-      className: "h-10",
-      color: "from-green-300 via-teal-300 to-transparent",
-    },
-    {
-      initialX: 700,
-      translateX: 700,
-      duration: 7,
-      repeatDelay: 4,
-      delay: 0,
-      className: "h-8",
-      color: "from-yellow-300 via-orange-300 to-transparent",
-    },
-    {
-      initialX: 800,
-      translateX: 800,
-      duration: 11,
-      repeatDelay: 2,
-      delay: 2,
-      className: "h-20",
-      color: "from-indigo-500 via-purple-500 to-transparent",
-    },
-    {
-      initialX: 900,
-      translateX: 900,
-      duration: 4,
-      repeatDelay: 2,
-      delay: 1,
-      className: "h-12",
-      color: "from-pink-500 via-red-500 to-transparent",
-    },
-    {
-      initialX: 1000,
-      translateX: 1000,
-      duration: 6,
-      repeatDelay: 4,
-      delay: 2,
-      className: "h-6",
-      color: "from-green-400 via-teal-400 to-transparent",
-    },
-    {
-      initialX: 1100,
-      translateX: 1100,
-      duration: 5,
-      repeatDelay: 3,
-      delay: 3,
-      className: "h-10",
-      color: "from-yellow-400 via-orange-400 to-transparent",
-    },
-    {
-      initialX: 1200,
-      translateX: 1200,
-      duration: 6,
-      repeatDelay: 2,
-      delay: 4,
-      className: "h-8",
-      color: "from-indigo-400 via-purple-400 to-transparent",
-    },
-    {
-      initialX: 1300,
-      translateX: 1300,
-      duration: 7,
-      repeatDelay: 3,
-      delay: 1,
-      className: "h-12",
-      color: "from-pink-300 via-red-300 to-transparent",
-    },
-    {
-      initialX: 1400,
-      translateX: 1400,
-      duration: 4,
-      repeatDelay: 5,
-      delay: 2,
-      className: "h-6",
-      color: "from-green-300 via-teal-300 to-transparent",
-    },
-    {
-      initialX: 1500,
-      translateX: 1500,
-      duration: 9,
-      repeatDelay: 2,
-      delay: 0,
-      className: "h-14",
-      color: "from-yellow-300 via-orange-300 to-transparent",
-    },
-  ];
+  useEffect(() => {
+    const updateViewportWidth = () => {
+      setViewportWidth(window.innerWidth);
+    };
+
+    updateViewportWidth();
+    window.addEventListener("resize", updateViewportWidth);
+
+    return () => window.removeEventListener("resize", updateViewportWidth);
+  }, []);
+
+  // Gerar vigas responsivas baseadas na largura da viewport
+  const generateResponsiveBeams = (width: number) => {
+    const numBeams = Math.max(6, Math.floor(width / 100)); // Pelo menos 6 vigas
+    const beams = [];
+
+    for (let i = 0; i < numBeams; i++) {
+      const position = (i / (numBeams - 1)) * 90 + 5; // Distribuir entre 5% e 95%
+      beams.push({
+        initialX: position, // Agora é uma porcentagem
+        duration: 4 + Math.random() * 6, // 4-10 segundos
+        repeatDelay: 2 + Math.random() * 3, // 2-5 segundos
+        delay: Math.random() * 4, // 0-4 segundos
+        className: `h-${[6, 8, 10, 12, 14][Math.floor(Math.random() * 5)]}`,
+        color: [
+          "from-indigo-500 via-purple-500 to-transparent",
+          "from-pink-500 via-red-500 to-transparent",
+          "from-green-400 via-teal-400 to-transparent",
+          "from-yellow-400 via-orange-400 to-transparent",
+          "from-indigo-400 via-purple-400 to-transparent",
+          "from-pink-300 via-red-300 to-transparent",
+          "from-green-300 via-teal-300 to-transparent",
+          "from-yellow-300 via-orange-300 to-transparent",
+        ][Math.floor(Math.random() * 8)],
+      });
+    }
+
+    return beams;
+  };
+
+  const beams = viewportWidth > 0 ? generateResponsiveBeams(viewportWidth) : [];
 
   return (
     <div
       ref={parentRef}
       className={cn(
-        "h-96 md:h-[40rem] bg-gradient-to-b from-white to-neutral-100 dark:from-neutral-950 dark:to-neutral-800 relative flex items-center w-full justify-center overflow-hidden",
-        // h-screen if you want bigger
+        "h-screen min-h-[calc(100vh_-_1px)] bg-gradient-to-b from-white to-neutral-100 dark:from-neutral-950 dark:to-neutral-800 relative flex items-center w-full justify-center",
         className
       )}
+      style={{
+        overflow: "hidden",
+        maxWidth: "100vw",
+        width: "100%",
+      }}
     >
-      {beams.map((beam) => (
-        <CollisionMechanism
-          key={beam.initialX + "beam-idx"}
-          beamOptions={beam}
-          containerRef={containerRef}
-          parentRef={parentRef}
-        />
-      ))}
+      {/* Container interno com overflow hidden mais rigoroso */}
+      <div
+        className="absolute inset-0"
+        style={{
+          overflow: "hidden",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {beams.map((beam, index) => (
+          <CollisionMechanism
+            key={`beam-${index}-${beam.initialX}`}
+            beamOptions={beam}
+            containerRef={containerRef}
+            parentRef={parentRef}
+          />
+        ))}
+      </div>
 
       {children}
       <div
         ref={containerRef}
-        className="absolute bottom-0 bg-neutral-100 w-full inset-x-0 pointer-events-none"
+        className="absolute bottom-0 bg-neutral-100 dark:bg-neutral-800 w-full inset-x-0 pointer-events-none"
         style={{
           boxShadow:
             "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset",
@@ -268,6 +178,12 @@ const CollisionMechanism = React.forwardRef<
     }
   }, [collision]);
 
+  // Calcular posições responsivas baseadas na largura da viewport
+  const getResponsivePosition = (initialX: number) => {
+    // initialX agora é uma porcentagem (5-95)
+    return `${initialX}%`;
+  };
+
   return (
     <>
       <motion.div
@@ -276,13 +192,13 @@ const CollisionMechanism = React.forwardRef<
         animate="animate"
         initial={{
           translateY: beamOptions.initialY || "-200px",
-          translateX: beamOptions.initialX || "0px",
+          translateX: "0px",
           rotate: beamOptions.rotate || 0,
         }}
         variants={{
           animate: {
             translateY: beamOptions.translateY || "1800px",
-            translateX: beamOptions.translateX || "0px",
+            translateX: "0px", // Sem movimento horizontal
             rotate: beamOptions.rotate || 0,
           },
         }}
@@ -295,9 +211,17 @@ const CollisionMechanism = React.forwardRef<
           repeatDelay: beamOptions.repeatDelay || 0,
         }}
         className={cn(
-          "absolute left-0 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent",
-          beamOptions.className
+          "absolute top-20 w-px rounded-full",
+          // Usar o gradiente personalizado da opção ou padrão
+          beamOptions.color
+            ? `bg-gradient-to-t ${beamOptions.color}`
+            : "bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent",
+          beamOptions.className || "h-14"
         )}
+        style={{
+          left: getResponsivePosition(beamOptions.initialX || 0),
+          transform: "translateX(-50%)", // Centralizar a viga na posição
+        }}
       />
       <AnimatePresence>
         {collision.detected && collision.coordinates && (

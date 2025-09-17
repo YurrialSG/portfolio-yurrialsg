@@ -19,8 +19,11 @@ export function HeroSection() {
   };
 
   return (
-    <section id="home">
-      <BackgroundBeamsWithCollision className="relative min-h-[calc(100vh_-_1px)] flex items-center overflow-hidden">
+    <section
+      id="home"
+      className="flex items-center min-h-[calc(100vh_-_1px)] overflow-clip"
+    >
+      <BackgroundBeamsWithCollision className="relative">
         <div className="relative z-20 w-full">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -114,7 +117,6 @@ export function HeroSection() {
             </div>
           </div>
         </div>
-
         <motion.div
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
           animate={{ y: [0, 10, 0] }}

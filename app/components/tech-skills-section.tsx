@@ -21,13 +21,13 @@ const skillCategories = [
     title: "Front-end",
     icon: <Code className="w-6 h-6" />,
     skills: [
-      { name: "HTML", level: 95 },
-      { name: "CSS", level: 90 },
+      { name: "HTML", level: 98 },
+      { name: "CSS", level: 95 },
       { name: "JavaScript", level: 95 },
       { name: "TypeScript", level: 90 },
-      { name: "React.js", level: 95 },
-      { name: "Next.js", level: 90 },
-      { name: "Vue.js", level: 85 },
+      { name: "React.js", level: 97 },
+      { name: "Next.js", level: 95 },
+      { name: "Vue.js", level: 75 },
       { name: "Tailwind CSS", level: 95 },
       { name: "WordPress", level: 80 },
     ],
@@ -36,65 +36,57 @@ const skillCategories = [
     title: "Back-end",
     icon: <Server className="w-6 h-6" />,
     skills: [
-      { name: "Node.js", level: 90 },
-      { name: "Python", level: 85 },
-      { name: "PHP", level: 80 },
-      { name: "Express.js", level: 85 },
-      { name: "FastAPI", level: 80 },
-      { name: "PostgreSQL", level: 85 },
-      { name: "MongoDB", level: 80 },
+      { name: "Node.js", level: 80 },
+      { name: "Python", level: 70 },
+      { name: "PHP", level: 65 },
     ],
   },
   {
     title: "Mobile",
     icon: <Smartphone className="w-6 h-6" />,
     skills: [
-      { name: "React Native", level: 85 },
-      { name: "Flutter", level: 80 },
-      { name: "Expo", level: 85 },
-      { name: "Android Studio", level: 75 },
+      { name: "React Native", level: 75 },
+      { name: "Flutter", level: 50 },
+      { name: "Expo", level: 70 },
     ],
   },
   {
     title: "DevOps & Cloud",
     icon: <Cloud className="w-6 h-6" />,
     skills: [
-      { name: "AWS", level: 80 },
-      { name: "Docker", level: 85 },
-      { name: "Git", level: 95 },
-      { name: "GitHub Actions", level: 80 },
-      { name: "Vercel", level: 90 },
-      { name: "Netlify", level: 85 },
+      { name: "AWS", level: 65 },
+      { name: "Docker", level: 70 },
+      { name: "Git", level: 90 },
+      { name: "GitHub Actions", level: 75 },
+      { name: "CI/CD Pipelines", level: 70 },
     ],
   },
   {
     title: "AI & Data",
     icon: <Brain className="w-6 h-6" />,
     skills: [
-      { name: "Machine Learning", level: 75 },
-      { name: "OpenAI API", level: 80 },
-      { name: "LangChain", level: 75 },
-      { name: "Data Analysis", level: 80 },
-      { name: "Pandas", level: 75 },
+      { name: "OpenAI API", level: 70 },
+      { name: "LangChain", level: 65 },
+      { name: "Data Analysis", level: 70 },
     ],
   },
   {
     title: "Tools & Others",
     icon: <Zap className="w-6 h-6" />,
     skills: [
-      { name: "VS Code", level: 95 },
-      { name: "Figma", level: 85 },
-      { name: "Postman", level: 90 },
-      { name: "Jira", level: 80 },
-      { name: "Slack", level: 90 },
-      { name: "Notion", level: 85 },
+      { name: "VS Code", level: 90 },
+      { name: "Figma", level: 80 },
+      { name: "Postman", level: 85 },
+      { name: "Jira", level: 75 },
+      { name: "Slack", level: 80 },
+      { name: "Notion", level: 80 },
     ],
   },
 ];
 
 export function TechSkillsSection() {
   return (
-    <section id="skills" className="py-20 bg-muted/30">
+    <section id="skills" className="py-20 bg-muted/30 overflow-clip">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

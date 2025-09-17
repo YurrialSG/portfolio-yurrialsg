@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import "./globals.css";
+import { Navigation } from "./components/navigation";
 
 export const metadata: Metadata = {
   title: "Yuri Silveira - Engenheiro de Software",
@@ -21,7 +22,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        <Suspense fallback={null}>
+          <Navigation />
+          {children}
+        </Suspense>
         <Analytics />
       </body>
     </html>

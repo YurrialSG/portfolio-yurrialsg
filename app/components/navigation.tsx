@@ -63,7 +63,6 @@ export function Navigation() {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => (
@@ -82,7 +81,6 @@ export function Navigation() {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -98,7 +96,6 @@ export function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background border-t border-border">
