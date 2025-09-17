@@ -2,12 +2,11 @@
 
 import type React from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
 import {
-  Github,
   Linkedin,
   Instagram,
   Mail,
@@ -15,38 +14,37 @@ import {
   Phone,
   MessageCircle,
 } from "lucide-react";
-import { useState } from "react";
+// import { useState } from "react";
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   email: "",
+  //   message: "",
+  // });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aqui você pode implementar a lógica de envio do formulário
-    console.log("Form submitted:", formData);
-    alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
-    setFormData({ name: "", email: "", message: "" });
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("Form submitted:", formData);
+  //   alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
+  //   setFormData({ name: "", email: "", message: "" });
+  // };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
 
   const contactInfo = [
     {
       icon: Mail,
       title: "Email",
-      value: "yuri.silveira@email.com",
-      href: "mailto:yuri.silveira@email.com",
+      value: "yuriinternacional86@gmail.com",
+      href: "mailto:yuriinternacional86@gmail.com",
     },
     {
       icon: Phone,
@@ -68,12 +66,6 @@ export function ContactSection() {
       name: "LinkedIn",
       href: "https://www.linkedin.com/in/yuri-silveira-sg",
       color: "hover:text-blue-600",
-    },
-    {
-      icon: Github,
-      name: "GitHub",
-      href: "#",
-      color: "hover:text-gray-900",
     },
     {
       icon: Instagram,
@@ -104,9 +96,8 @@ export function ContactSection() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <Card className="shadow-lg">
+          <div className="grid gap-12">
+            {/* <Card className="shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl text-foreground">
                   Envie uma Mensagem
@@ -152,9 +143,8 @@ export function ContactSection() {
                   </Button>
                 </form>
               </CardContent>
-            </Card>
+            </Card> */}
 
-            {/* Contact Info */}
             <div className="space-y-8">
               <div>
                 <h3 className="text-2xl font-semibold text-foreground mb-6">

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { AnimatedShinyText } from "./magic-ui/animated-shiny-text";
@@ -31,7 +31,7 @@ export function ProjectsSection() {
 
   const projects = [
     {
-      title: "Awari",
+      title: "Awari by Fluency",
       description:
         "Plataforma de educação tecnológica e desenvolvimento profissional que oferece cursos online com aulas ao vivo, mentorias individuais e suporte de carreira.",
       image: "/awari.png",
@@ -46,22 +46,26 @@ export function ProjectsSection() {
         "Redis",
       ],
       liveUrl: "https://awari.com.br/",
+      type: "website",
     },
     {
-      title: "Fluency Academy",
-      description:
-        "Aplicativo de gerenciamento de tarefas com colaboração em tempo real e notificações push.",
-      image: "/task-management-interface.png",
-      technologies: ["React", "Node.js", "Socket.io", "MongoDB"],
-      liveUrl: "#",
+      title: "ACPO Empreendimentos",
+      description: "Site para construtora ACPO empreendimentos.",
+      image: "/acpo.png",
+      technologies: ["Next Js", "Tailwind CSS", "Chart.js"],
+      liveUrl: "https://www.acpo.com.br/",
+      type: "website",
     },
     {
-      title: "Weather Dashboard",
+      title: "Fluency Academy - App",
       description:
-        "Dashboard meteorológico com previsões detalhadas, mapas interativos e alertas personalizados.",
-      image: "/weather-dashboard-interface.png",
-      technologies: ["React", "Tailwind CSS", "OpenWeather API", "Chart.js"],
-      liveUrl: "#",
+        "Aplicativo onde você aprende inglês na prática, com um tutor de inteligência artificial que interage, corrige e te ajuda a evoluir como se estivesse em um intercâmbio.",
+      image: "/fluency-app.png",
+      technologies: ["Flutter", "Socket.io", "Eleven Labs"],
+      androidUrl:
+        "https://play.google.com/store/apps/details?id=io.fluencyacademy.fluency_app&pcampaignid=web_share",
+      iosUrl: "https://apps.apple.com/br/app/fluency/id6737087903",
+      type: "mobile",
     },
   ];
 
@@ -155,13 +159,53 @@ export function ProjectsSection() {
                     </div>
 
                     <div className="flex gap-2 pt-2">
-                      <Button
-                        size="sm"
-                        className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2 text-white" />
-                        Demo
-                      </Button>
+                      {project.type === "website" ? (
+                        <Button
+                          size="sm"
+                          className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
+                          onClick={() =>
+                            window.open(
+                              project.liveUrl,
+                              "_blank",
+                              "noopener,noreferrer"
+                            )
+                          }
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2 text-white" />
+                          Demo
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            size="sm"
+                            className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
+                            onClick={() =>
+                              window.open(
+                                project.androidUrl,
+                                "_blank",
+                                "noopener,noreferrer"
+                              )
+                            }
+                          >
+                            <Smartphone className="w-4 h-4 mr-2 text-white" />
+                            Android
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
+                            onClick={() =>
+                              window.open(
+                                project.iosUrl,
+                                "_blank",
+                                "noopener,noreferrer"
+                              )
+                            }
+                          >
+                            <Smartphone className="w-4 h-4 mr-2 text-white" />
+                            iOS
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

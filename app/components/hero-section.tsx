@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Github, Linkedin, Instagram, ArrowDown, Download } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+import { Linkedin, Instagram, ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { TypingAnimation } from "./magic-ui/typing-animation";
 import { ShimmerButton } from "./magic-ui/shimmer-button";
@@ -21,7 +21,7 @@ export function HeroSection() {
   return (
     <section
       id="home"
-      className="flex items-center min-h-[calc(100vh_-_1px)] overflow-clip"
+      className="flex items-center min-h-[calc(100vh_-_10px)] overflow-clip"
     >
       <BackgroundBeamsWithCollision className="relative">
         <div className="relative z-20 w-full">
@@ -71,25 +71,31 @@ export function HeroSection() {
                   >
                     Ver Meus Projetos
                   </ShimmerButton>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     size="lg"
                     className="text-lg px-8 py-3 h-12 group bg-transparent"
                   >
                     <Download className="w-5 h-5 mr-2 group-hover:text-primary transition-colors" />
                     Download CV
-                  </Button>
+                  </Button> */}
                 </div>
 
                 <div className="flex justify-center lg:justify-start space-x-6">
                   {[
-                    { icon: Linkedin, href: "#" },
-                    { icon: Github, href: "#" },
-                    { icon: Instagram, href: "#" },
+                    {
+                      icon: Linkedin,
+                      href: "https://www.linkedin.com/in/yuri-silveira-sg",
+                    },
+                    {
+                      icon: Instagram,
+                      href: "https://www.instagram.com/yurisilveirasg",
+                    },
                   ].map((social, i) => (
                     <motion.a
                       key={i}
                       href={social.href}
+                      target="_blank"
                       className="text-muted-foreground hover:text-primary transition-all duration-300"
                       whileHover={{ scale: 1.2, rotate: 5 }}
                       whileTap={{ scale: 0.9 }}
@@ -110,7 +116,7 @@ export function HeroSection() {
                   <Lottie
                     animationData={programingAnimation}
                     loop={true}
-                    className="w-80 h-80"
+                    className="w-100 h-100"
                   />
                 </div>
               </motion.div>
@@ -128,7 +134,7 @@ export function HeroSection() {
         >
           <motion.button
             onClick={() => scrollToSection("about")}
-            className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-muted/50"
+            className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-muted/50 cursor-pointer"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
