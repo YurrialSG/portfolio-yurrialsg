@@ -194,8 +194,8 @@ export const BackgroundBeamsWithCollision = ({
 const CollisionMechanism = React.forwardRef<
   HTMLDivElement,
   {
-    containerRef: React.RefObject<HTMLDivElement>;
-    parentRef: React.RefObject<HTMLDivElement>;
+    containerRef: React.RefObject<HTMLDivElement | null>;
+    parentRef: React.RefObject<HTMLDivElement | null>;
     beamOptions?: {
       initialX?: number;
       translateX?: number;
@@ -206,6 +206,7 @@ const CollisionMechanism = React.forwardRef<
       duration?: number;
       delay?: number;
       repeatDelay?: number;
+      color?: string;
     };
   }
 >(({ parentRef, containerRef, beamOptions = {} }, ref) => {
@@ -252,7 +253,7 @@ const CollisionMechanism = React.forwardRef<
     const animationInterval = setInterval(checkCollision, 50);
 
     return () => clearInterval(animationInterval);
-  }, [cycleCollisionDetected, containerRef]);
+  }, [cycleCollisionDetected, containerRef, parentRef]);
 
   useEffect(() => {
     if (collision.detected && collision.coordinates) {
@@ -271,7 +272,7 @@ const CollisionMechanism = React.forwardRef<
     <>
       <motion.div
         key={beamKey}
-        ref={beamRef}
+        ref={ref || beamRef}
         animate="animate"
         initial={{
           translateY: beamOptions.initialY || "-200px",
@@ -318,16 +319,16 @@ const CollisionMechanism = React.forwardRef<
 CollisionMechanism.displayName = "CollisionMechanism";
 
 const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
-  const spans = Array.from({ length: 20 }, (_, index) => ({
+  const spans = Array.from({ length: 35 }, (_, index) => ({
     id: index,
     initialX: 0,
     initialY: 0,
-    directionX: Math.floor(Math.random() * 80 - 40),
-    directionY: Math.floor(Math.random() * -50 - 10),
+    directionX: Math.floor(Math.random() * 160 - 80),
+    directionY: Math.floor(Math.random() * -100 - 20),
   }));
 
   return (
-    <div {...props} className={cn("absolute z-50 h-2 w-2", props.className)}>
+    <div {...props} className={cn("absolute z-50 h-4 w-4", props.className)}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -343,6 +344,7 @@ const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
             x: span.directionX,
             y: span.directionY,
             opacity: 0,
+            scale: [0, 1, 0],
           }}
           transition={{ duration: Math.random() * 1.5 + 0.5, ease: "easeOut" }}
           className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-purple-500"

@@ -19,8 +19,8 @@ export function HeroSection() {
   };
 
   return (
-    <section id="home" className="py-20 bg-background">
-      <BackgroundBeamsWithCollision className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home">
+      <BackgroundBeamsWithCollision className="relative min-h-[calc(100vh_-_1px)] flex items-center overflow-hidden">
         <div className="relative z-20 w-full">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -35,9 +35,9 @@ export function HeroSection() {
                     <WordRotate
                       words={[
                         "Engenheiro de Software",
-                        "Full Stack Developer",
-                        "Frontend Specialist",
-                        "Backend Engineer",
+                        "Full Stack",
+                        "Frontend",
+                        "Backend",
                       ]}
                       duration={3000}
                     />
