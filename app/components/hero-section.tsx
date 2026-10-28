@@ -1,147 +1,246 @@
-"use client";
+"use client"
 
-// import { Button } from "@/components/ui/button";
-import { Linkedin, Instagram, ArrowDown } from "lucide-react";
-import { motion } from "framer-motion";
-import { TypingAnimation } from "./magic-ui/typing-animation";
-import { ShimmerButton } from "./magic-ui/shimmer-button";
-import { AnimatedShinyText } from "./magic-ui/animated-shiny-text";
-import { WordRotate } from "./magic-ui/word-rotate";
-import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
-import Lottie from "lottie-react";
+import { useRef, useEffect } from "react"
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
+import { Linkedin, Instagram } from "lucide-react"
+import * as THREE from "three"
 
-import programingAnimation from "@/public/animations/programming-computer.json";
+function createCircleTexture() {
+  const size = 32
+  const canvas = document.createElement("canvas")
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext("2d")!
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  gradient.addColorStop(0, "rgba(200, 169, 110, 1)")
+  gradient.addColorStop(0.4, "rgba(200, 169, 110, 0.6)")
+  gradient.addColorStop(1, "rgba(200, 169, 110, 0)")
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, size, size)
+  return new THREE.CanvasTexture(canvas)
+}
 
 export function HeroSection() {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
-  };
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { scrollYProgress } = useScroll()
+  const y = useTransform(scrollYProgress, [0, 0.4], [0, -120])
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
+
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 30 })
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 30 })
+  const contentX = useTransform(springX, [-0.5, 0.5], [-12, 12])
+  const contentY = useTransform(springY, [-0.5, 0.5], [-8, 8])
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set((e.clientX / window.innerWidth) - 0.5)
+      mouseY.set((e.clientY / window.innerHeight) - 0.5)
+    }
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
+  }, [mouseX, mouseY])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    camera.position.z = 5
+
+    const particleCount = 180
+    const positions = new Float32Array(particleCount * 3)
+    const velocities: { vx: number; vy: number }[] = []
+
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3]     = (Math.random() - 0.5) * 10
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 10
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 2
+      velocities.push({
+        vx: (Math.random() * 0.0004 + 0.0002) * (Math.random() > 0.5 ? 1 : -1),
+        vy: (Math.random() * 0.0004 + 0.0002) * (Math.random() > 0.5 ? 1 : -1),
+      })
+    }
+
+    const geometry = new THREE.BufferGeometry()
+    const posAttr = new THREE.BufferAttribute(positions, 3)
+    geometry.setAttribute("position", posAttr)
+
+    const texture = createCircleTexture()
+    const material = new THREE.PointsMaterial({
+      size: 4,
+      map: texture,
+      transparent: true,
+      opacity: 0.65,
+      sizeAttenuation: false,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    })
+
+    const points = new THREE.Points(geometry, material)
+    scene.add(points)
+
+    const bounds = 5
+    let animId: number
+
+    const animate = () => {
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3]     += velocities[i].vx
+        positions[i * 3 + 1] += velocities[i].vy
+        if (positions[i * 3] > bounds || positions[i * 3] < -bounds) velocities[i].vx *= -1
+        if (positions[i * 3 + 1] > bounds || positions[i * 3 + 1] < -bounds) velocities[i].vy *= -1
+      }
+      posAttr.needsUpdate = true
+      renderer.render(scene, camera)
+      animId = requestAnimationFrame(animate)
+    }
+
+    animId = requestAnimationFrame(animate)
+
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    }
+
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener("resize", handleResize)
+      renderer.dispose()
+      geometry.dispose()
+      material.dispose()
+      texture.dispose()
+    }
+  }, [])
+
+  const scrollToAbout = () => {
+    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })
+  }
 
   return (
-    <section
-      id="home"
-      className="flex items-center min-h-[calc(100vh_-_10px)] overflow-clip"
-    >
-      <BackgroundBeamsWithCollision className="relative">
-        <div className="relative z-20 w-full">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-center lg:text-left"
-              >
-                <div className="mb-6">
-                  <div className="text-primary font-medium text-sm uppercase tracking-wider mb-2">
-                    <WordRotate
-                      words={[
-                        "Engenheiro de Software",
-                        "Full Stack",
-                        "Frontend",
-                        "Backend",
-                      ]}
-                      duration={3000}
-                    />
-                  </div>
-                  <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-4 leading-tight">
-                    <AnimatedShinyText className="text-5xl lg:text-7xl font-bold">
-                      Yuri
-                    </AnimatedShinyText>
-                    <span className="block text-primary">
-                      <TypingAnimation
-                        text="Silveira"
-                        duration={150}
-                        className="text-5xl lg:text-7xl font-bold"
-                      />
-                    </span>
-                  </h1>
-                </div>
+    <section id="home" className="relative min-h-screen overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+      />
 
-                <p className="text-xl lg:text-2xl text-muted-foreground mb-8 max-w-xl text-pretty leading-relaxed">
-                  Transformando ideias em soluções digitais inovadoras com
-                  tecnologias modernas e design centrado no usuário.
-                </p>
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 55% 55% at 50% 50%, rgba(200, 169, 110, 0.07) 0%, transparent 75%)",
+        }}
+      />
 
-                <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center lg:justify-start">
-                  <ShimmerButton
-                    className="text-lg px-8 py-3 h-12 cursor-pointer"
-                    onClick={() => scrollToSection("projects")}
-                  >
-                    Ver Meus Projetos
-                  </ShimmerButton>
-                  {/* <Button
-                    variant="outline"
-                    size="lg"
-                    className="text-lg px-8 py-3 h-12 group bg-transparent"
-                  >
-                    <Download className="w-5 h-5 mr-2 group-hover:text-primary transition-colors" />
-                    Download CV
-                  </Button> */}
-                </div>
+      <motion.div
+        className="absolute left-0 right-0 h-px z-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to right, transparent, rgba(200,169,110,0.35), transparent)",
+        }}
+        initial={{ top: "0%" }}
+        animate={{ top: "105%" }}
+        transition={{ duration: 5, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+      />
 
-                <div className="flex justify-center lg:justify-start space-x-6">
-                  {[
-                    {
-                      icon: Linkedin,
-                      href: "https://www.linkedin.com/in/yuri-silveira-sg",
-                    },
-                    {
-                      icon: Instagram,
-                      href: "https://www.instagram.com/yurisilveirasg",
-                    },
-                  ].map((social, i) => (
-                    <motion.a
-                      key={i}
-                      href={social.href}
-                      target="_blank"
-                      className="text-muted-foreground hover:text-primary transition-all duration-300"
-                      whileHover={{ scale: 1.2, rotate: 5 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <social.icon className="w-6 h-6" />
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.div>
+      <motion.div
+        style={{ y, opacity }}
+        className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-4"
+      >
+        <motion.div style={{ x: contentX, y: contentY }} className="flex flex-col items-center">
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.6, delay: 0, ease: [0.76, 0, 0.24, 1] }}
+            style={{ transformOrigin: "left" }}
+            className="w-16 h-px bg-primary mb-6"
+          />
 
-              <motion.div
-                className="hidden lg:flex justify-center items-center relative"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
-              >
-                <div className="relative w-80 h-80 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center shadow-2xl backdrop-blur-sm border border-primary/20 overflow-hidden">
-                  <Lottie
-                    animationData={programingAnimation}
-                    loop={true}
-                    className="w-100 h-100"
-                  />
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{
-            duration: 2,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        >
-          <motion.button
-            onClick={() => scrollToSection("about")}
-            className="text-muted-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-muted/50 cursor-pointer"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <motion.p
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="uppercase tracking-widest text-xs text-primary mb-4"
           >
-            <ArrowDown className="w-6 h-6" />
-          </motion.button>
+            ENGENHEIRO DE SOFTWARE
+          </motion.p>
+
+          <div className="overflow-hidden">
+            <motion.h1
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              animate={{ clipPath: "inset(0 0% 0 0)" }}
+              transition={{ duration: 1, delay: 0.6, ease: [0.76, 0, 0.24, 1] }}
+              className="text-[60px] sm:text-[80px] lg:text-[96px] font-black leading-none tracking-tight text-foreground"
+            >
+              YURI
+            </motion.h1>
+          </div>
+
+          <div className="overflow-hidden">
+            <motion.h1
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              animate={{ clipPath: "inset(0 0% 0 0)" }}
+              transition={{ duration: 1, delay: 0.85, ease: [0.76, 0, 0.24, 1] }}
+              className="text-[60px] sm:text-[80px] lg:text-[96px] font-black leading-none tracking-tight text-primary"
+            >
+              SILVEIRA
+            </motion.h1>
+          </div>
+
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 1.2, ease: [0.76, 0, 0.24, 1] }}
+            style={{ transformOrigin: "left" }}
+            className="w-full h-px bg-border mt-6 mb-6"
+          />
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.3 }}
+            className="text-muted-foreground max-w-md"
+          >
+            Full Stack Engineer. Código limpo, produto real.
+          </motion.p>
+
+          <div className="flex gap-6 mt-8">
+            {[
+              { icon: Linkedin, href: "https://www.linkedin.com/in/yuri-silveira-sg" },
+              { icon: Instagram, href: "https://www.instagram.com/yurisilveirasg" },
+            ].map((social, i) => (
+              <motion.a
+                key={i}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 1.7 + i * 0.1, ease: [0.76, 0, 0.24, 1] }}
+                whileHover={{ scale: 1.15 }}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                <social.icon className="w-5 h-5" />
+              </motion.a>
+            ))}
+          </div>
         </motion.div>
-      </BackgroundBeamsWithCollision>
+      </motion.div>
+
+      <button
+        onClick={scrollToAbout}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 cursor-pointer group"
+      >
+        <span className="uppercase tracking-widest text-xs text-muted-foreground group-hover:text-primary transition-colors">
+          SCROLL
+        </span>
+        <div className="w-px bg-primary animate-scroll-pulse" />
+      </button>
     </section>
-  );
+  )
 }

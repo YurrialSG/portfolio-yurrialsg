@@ -1,136 +1,74 @@
-"use client";
+"use client"
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Code, Lightbulb, Users, Zap } from "lucide-react";
-import Image from "next/image";
+import Image from "next/image"
+import { useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { RevealText } from "./RevealText"
+import { useScrollReveal } from "../hooks/useScrollReveal"
+
+const paragraphs = [
+  "Comecei a programar aos 16 anos e nunca parei. Hoje, construo produtos completos — do banco de dados ao que o usuário toca na tela.",
+  "Especializo em React e Next.js no frontend, Node.js no backend. Tenho passagens por startups de ed-tech onde a performance do produto importava de verdade.",
+  "Prefiro projetos onde o código precisa resolver um problema real, não apenas existir.",
+]
 
 export function AboutSection() {
-  const technologies = [
-    "React",
-    "Next.js",
-    "Node.js",
-    "TypeScript",
-    "Tailwind CSS",
-    "JavaScript",
-    "Python",
-    "PostgreSQL",
-    "MongoDB",
-    "Git",
-  ];
+  const sectionRef = useRef<HTMLElement>(null)
+  const { ref: photoRef, isInView: photoInView } = useScrollReveal()
+  const { ref: textRef, isInView: textInView } = useScrollReveal()
 
-  const softSkills = [
-    {
-      icon: Code,
-      title: "Pensamento Analítico",
-      description: "Resolução eficiente de problemas complexos",
-    },
-    {
-      icon: Lightbulb,
-      title: "Inovação",
-      description: "Sempre buscando soluções criativas e modernas",
-    },
-    {
-      icon: Users,
-      title: "Trabalho em Equipe",
-      description: "Colaboração efetiva em projetos multidisciplinares",
-    },
-    {
-      icon: Zap,
-      title: "Adaptabilidade",
-      description: "Rápida adaptação a novas tecnologias e metodologias",
-    },
-  ];
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  })
+
+  const photoY = useTransform(scrollYProgress, [0, 1], [0, -30])
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 20])
 
   return (
-    <section id="about" className="py-20 bg-muted/30">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="animate-fade-in-up">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Sobre Mim
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Conheça um pouco mais sobre minha trajetória e habilidades
-            </p>
-          </div>
+    <section id="about" ref={sectionRef} className="py-32 px-4">
+      <div className="max-w-6xl mx-auto">
+        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary mb-16 block">
+          SOBRE
+        </RevealText>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="flex justify-center lg:justify-start">
-              <div className="w-80 h-80 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                <div className="w-64 h-64 relative rounded-xl bg-primary shadow-lg overflow-hidden">
-                  <Image
-                    src="/avatar.png"
-                    alt="Imagem de perfil do Yuri"
-                    fill
-                    className="object-cover rounded-xl"
-                    sizes="256px"
-                  />
-                </div>
-              </div>
-            </div>
+        <div className="grid lg:grid-cols-[40%_60%] gap-16 items-start">
+          <motion.div
+            ref={photoRef as React.RefObject<HTMLDivElement>}
+            style={{ y: photoY }}
+            initial={{ scale: 1.08, opacity: 0 }}
+            animate={photoInView ? { scale: 1, opacity: 1 } : {}}
+            transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
+            className="relative w-full max-w-[320px] h-[400px] border border-primary overflow-hidden mx-auto lg:mx-0"
+          >
+            <Image
+              src="/avatar.png"
+              alt="Yuri Silveira"
+              fill
+              className="object-cover"
+              sizes="320px"
+            />
+          </motion.div>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">
-                  Minha Jornada
-                </h3>
-                <p className="text-muted-foreground text-pretty leading-relaxed">
-                  Sou um engenheiro de software apaixonado por criar
-                  experiências digitais excepcionais. Com experiência sólida em
-                  desenvolvimento full-stack, especializo-me em tecnologias
-                  modernas como React, Next.js e Node.js. Minha abordagem
-                  combina código limpo, design intuitivo e performance otimizada
-                  para entregar soluções que realmente fazem a diferença.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-semibold text-foreground mb-3">
-                  Tecnologias que Domino
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {technologies.map((tech) => (
-                    <Badge
-                      key={tech}
-                      variant="secondary"
-                      className="hover:bg-primary hover:text-primary-foreground transition-colors"
-                    >
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16">
-            <h3 className="text-2xl font-semibold text-foreground mb-8 text-center">
-              Soft Skills
-            </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {softSkills.map((skill, index) => (
-                <Card
-                  key={index}
-                  className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                      <skill.icon className="w-6 h-6" />
-                    </div>
-                    <h4 className="font-semibold text-foreground mb-2">
-                      {skill.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground text-pretty">
-                      {skill.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
+          <motion.div
+            ref={textRef as React.RefObject<HTMLDivElement>}
+            style={{ y: textY }}
+            className="max-w-lg space-y-8 pt-4"
+          >
+            {paragraphs.map((p, i) => (
+              <motion.p
+                key={i}
+                initial={{ y: 24, opacity: 0 }}
+                animate={textInView ? { y: 0, opacity: 1 } : {}}
+                transition={{ duration: 0.6, delay: i * 0.15, ease: [0.76, 0, 0.24, 1] }}
+                className="text-foreground/80 leading-relaxed"
+              >
+                {p}
+              </motion.p>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
-  );
+  )
 }

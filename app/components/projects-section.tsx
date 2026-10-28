@@ -1,219 +1,167 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Smartphone } from "lucide-react";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { AnimatedShinyText } from "./magic-ui/animated-shiny-text";
+import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import { ExternalLink } from "lucide-react"
+import Image from "next/image"
+import { RevealText } from "./RevealText"
+import { useScrollReveal } from "../hooks/useScrollReveal"
 
-export function ProjectsSection() {
-  const [, setIsVisible] = useState(false);
+const projects = [
+  {
+    number: "01",
+    title: "Awari by Fluency",
+    description: "Plataforma de educação tech com aulas ao vivo e mentorias.",
+    technologies: "WordPress · PHP · AWS · Redis",
+    image: "/awari.png",
+    type: "website" as const,
+    liveUrl: "https://awari.com.br/",
+  },
+  {
+    number: "02",
+    title: "ACPO Empreendimentos",
+    description: "Site institucional para construtora.",
+    technologies: "Next.js · Tailwind CSS · Chart.js",
+    image: "/acpo.png",
+    type: "website" as const,
+    liveUrl: "https://www.acpo.com.br/",
+  },
+  {
+    number: "03",
+    title: "Fluency Academy — App",
+    description: "App de inglês com tutor de IA e correção em tempo real.",
+    technologies: "Flutter · Socket.io · Eleven Labs",
+    image: "/fluency-app.png",
+    type: "mobile" as const,
+    androidUrl: "https://play.google.com/store/apps/details?id=io.fluencyacademy.fluency_app&pcampaignid=web_share",
+    iosUrl: "https://apps.apple.com/br/app/fluency/id6737087903",
+  },
+]
+
+function ProjectCard({ project, index, onVisible }: {
+  project: typeof projects[number]
+  index: number
+  onVisible: (i: number) => void
+}) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const { ref: imgRef, isInView: imgInView } = useScrollReveal()
 
   useEffect(() => {
+    const el = cardRef.current
+    if (!el) return
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const element = document.getElementById("projects");
-    if (element) {
-      observer.observe(element);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const projects = [
-    {
-      title: "Awari by Fluency",
-      description:
-        "Plataforma de educação tecnológica e desenvolvimento profissional que oferece cursos online com aulas ao vivo, mentorias individuais e suporte de carreira.",
-      image: "/awari.png",
-      technologies: [
-        "Wordpress",
-        "HTML",
-        "CSS",
-        "Javascript",
-        "PHP",
-        "AWS",
-        "Plugin Customizado",
-        "Redis",
-      ],
-      liveUrl: "https://awari.com.br/",
-      type: "website",
-    },
-    {
-      title: "ACPO Empreendimentos",
-      description: "Site para construtora ACPO empreendimentos.",
-      image: "/acpo.png",
-      technologies: ["Next Js", "Tailwind CSS", "Chart.js"],
-      liveUrl: "https://www.acpo.com.br/",
-      type: "website",
-    },
-    {
-      title: "Fluency Academy - App",
-      description:
-        "Aplicativo onde você aprende inglês na prática, com um tutor de inteligência artificial que interage, corrige e te ajuda a evoluir como se estivesse em um intercâmbio.",
-      image: "/fluency-app.png",
-      technologies: ["Flutter", "Socket.io", "Eleven Labs"],
-      androidUrl:
-        "https://play.google.com/store/apps/details?id=io.fluencyacademy.fluency_app&pcampaignid=web_share",
-      iosUrl: "https://apps.apple.com/br/app/fluency/id6737087903",
-      type: "mobile",
-    },
-  ];
+      ([entry]) => { if (entry.isIntersecting) onVisible(index) },
+      { threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [index, onVisible])
 
   return (
-    <section id="projects" className="py-20 bg-background overflow-clip">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+    <div
+      ref={cardRef}
+      className="grid lg:grid-cols-[60%_40%] min-h-[60vh] lg:min-h-[70vh]"
+    >
+      <motion.div
+        ref={imgRef as React.RefObject<HTMLDivElement>}
+        initial={{ scale: 1.06 }}
+        animate={imgInView ? { scale: 1 } : {}}
+        transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+        className="relative overflow-hidden order-1"
+        style={{ minHeight: "40vh" }}
+      >
+        <Image
+          src={project.image}
+          alt={project.title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 60vw"
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to right, transparent 60%, #050505)" }}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ x: 32, opacity: 0 }}
+        animate={imgInView ? { x: 0, opacity: 1 } : {}}
+        transition={{ duration: 0.7, delay: 0.2, ease: [0.76, 0, 0.24, 1] }}
+        className="relative flex flex-col justify-center bg-card order-2"
+        style={{ padding: "48px" }}
+      >
+        <span
+          className="absolute top-4 right-4 text-8xl font-black text-foreground select-none pointer-events-none"
+          style={{ opacity: 0.08 }}
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              <AnimatedShinyText>Meus Projetos</AnimatedShinyText>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Uma seleção dos meus trabalhos mais recentes e impactantes
-            </p>
+          {project.number}
+        </span>
+
+        <h3 className="text-2xl font-bold text-foreground mb-3">{project.title}</h3>
+        <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+        <p className="text-xs text-muted-foreground tracking-wide mb-6">{project.technologies}</p>
+
+        {project.type === "website" ? (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Ver projeto
+          </a>
+        ) : (
+          <div className="flex gap-6">
+            <a
+              href={project.androidUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Android
+            </a>
+            <a
+              href={project.iosUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              iOS
+            </a>
           </div>
+        )}
+      </motion.div>
+    </div>
+  )
+}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden relative">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, transparent, rgba(16,185,129,0.1), transparent)",
-                      backgroundSize: "200% 100%",
-                    }}
-                    animate={{
-                      backgroundPosition: ["0% 0%", "200% 0%"],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "linear",
-                    }}
-                  />
+export function ProjectsSection() {
+  const [activeProject, setActiveProject] = useState(0)
 
-                  <div className="relative overflow-hidden">
-                    <motion.img
-                      src={project.image || "/placeholder.svg"}
-                      alt={project.title}
-                      className="w-full h-48 object-cover"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
+  return (
+    <section id="projects" className="py-16">
+      <div className="max-w-6xl mx-auto px-4 mb-12 flex items-center justify-between">
+        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary">
+          PROJETOS
+        </RevealText>
+        <span className="uppercase tracking-widest text-xs text-muted-foreground">
+          {String(activeProject + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+        </span>
+      </div>
 
-                  <CardHeader className="relative z-10">
-                    <CardTitle className="text-xl text-foreground group-hover:text-primary transition-colors">
-                      {project.title}
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4 relative z-10">
-                    <p className="text-muted-foreground text-sm text-pretty leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech, techIndex) => (
-                        <motion.div
-                          key={tech}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{
-                            duration: 0.3,
-                            delay: techIndex * 0.05,
-                          }}
-                          viewport={{ once: true }}
-                        >
-                          <Badge
-                            variant="outline"
-                            className="text-xs hover:bg-primary/10 transition-colors"
-                          >
-                            {tech}
-                          </Badge>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    <div className="flex gap-2 pt-2">
-                      {project.type === "website" ? (
-                        <Button
-                          size="sm"
-                          className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
-                          onClick={() =>
-                            window.open(
-                              project.liveUrl,
-                              "_blank",
-                              "noopener,noreferrer"
-                            )
-                          }
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2 text-white" />
-                          Demo
-                        </Button>
-                      ) : (
-                        <>
-                          <Button
-                            size="sm"
-                            className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
-                            onClick={() =>
-                              window.open(
-                                project.androidUrl,
-                                "_blank",
-                                "noopener,noreferrer"
-                              )
-                            }
-                          >
-                            <Smartphone className="w-4 h-4 mr-2 text-white" />
-                            Android
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="flex-1 group/btn bg-primary text-white hover:bg-primary/80 transition-colors"
-                            onClick={() =>
-                              window.open(
-                                project.iosUrl,
-                                "_blank",
-                                "noopener,noreferrer"
-                              )
-                            }
-                          >
-                            <Smartphone className="w-4 h-4 mr-2 text-white" />
-                            iOS
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+      <div className="space-y-px">
+        {projects.map((project, i) => (
+          <ProjectCard
+            key={project.number}
+            project={project}
+            index={i}
+            onVisible={setActiveProject}
+          />
+        ))}
       </div>
     </section>
-  );
+  )
 }

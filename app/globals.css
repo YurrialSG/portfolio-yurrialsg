@@ -4,75 +4,26 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color palette to match modern portfolio design */
-  --background: #ffffff;
-  --foreground: #475569;
-  --card: #f1f5f9;
-  --card-foreground: #475569;
-  --popover: #ffffff;
-  --popover-foreground: #475569;
-  --primary: #059669;
-  --primary-foreground: #ffffff;
-  --secondary: #10b981;
-  --secondary-foreground: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
-  --accent: #10b981;
-  --accent-foreground: #ffffff;
-  --destructive: #be123c;
-  --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #ffffff;
-  --ring: rgba(0, 0, 0, 0.1);
-  --chart-1: #059669;
-  --chart-2: #10b981;
-  --chart-3: #f1f5f9;
-  --chart-4: #475569;
-  --chart-5: #ffffff;
-  --radius: 0.5rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #475569;
-  --sidebar-primary: #059669;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #10b981;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: rgba(0, 0, 0, 0.1);
-}
-
-.dark {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
-  --popover: #1e293b;
-  --popover-foreground: #f1f5f9;
-  --primary: #10b981;
-  --primary-foreground: #0f172a;
-  --secondary: #059669;
-  --secondary-foreground: #f1f5f9;
-  --muted: #334155;
-  --muted-foreground: #94a3b8;
-  --accent: #10b981;
-  --accent-foreground: #0f172a;
+  --background: #050505;
+  --foreground: #e8e0d4;
+  --card: #0d0d0d;
+  --card-foreground: #e8e0d4;
+  --popover: #0d0d0d;
+  --popover-foreground: #e8e0d4;
+  --primary: #c8a96e;
+  --primary-foreground: #050505;
+  --secondary: #8b6914;
+  --secondary-foreground: #e8e0d4;
+  --muted: #1a1a1a;
+  --muted-foreground: #6b6560;
+  --accent: #c8a96e;
+  --accent-foreground: #050505;
   --destructive: #ef4444;
-  --destructive-foreground: #f1f5f9;
-  --border: #334155;
-  --input: #1e293b;
-  --ring: rgba(255, 255, 255, 0.1);
-  --chart-1: #10b981;
-  --chart-2: #059669;
-  --chart-3: #334155;
-  --chart-4: #94a3b8;
-  --chart-5: #1e293b;
-  --sidebar: #0f172a;
-  --sidebar-foreground: #f1f5f9;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #0f172a;
-  --sidebar-accent: #059669;
-  --sidebar-accent-foreground: #f1f5f9;
-  --sidebar-border: #334155;
-  --sidebar-ring: rgba(255, 255, 255, 0.1);
+  --destructive-foreground: #e8e0d4;
+  --border: #2a2520;
+  --input: #0d0d0d;
+  --ring: rgba(200, 169, 110, 0.3);
+  --radius: 0.25rem;
 }
 
 @theme inline {
@@ -97,23 +48,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -125,82 +63,32 @@
     @apply bg-background text-foreground;
   }
 
-  /* Added smooth scrolling for better navigation experience */
   html {
     scroll-behavior: smooth;
   }
 }
 
-/* Added custom animations for portfolio interactions */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes clipWipeX {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes clipWipeY {
+  from { clip-path: inset(100% 0 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+@keyframes lineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
-.animate-slide-in-left {
-  animation: slideInLeft 0.6s ease-out;
+@keyframes scrollPulse {
+  0%, 100% { height: 0px; opacity: 1; }
+  50%       { height: 40px; opacity: 0.4; }
 }
 
-/* Added grid pattern background for modern hero section */
-.bg-grid-pattern {
-  background-image: linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-
-/* Added floating animation for decorative elements */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Added pulse animation with custom timing */
-@keyframes pulse-slow {
-
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 4s ease-in-out infinite;
-}
+.animate-clip-x        { animation: clipWipeX 1s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+.animate-clip-y        { animation: clipWipeY 1s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+.animate-line          { animation: lineGrow 1s cubic-bezier(0.76, 0, 0.24, 1) forwards; transform-origin: left; }
+.animate-scroll-pulse  { animation: scrollPulse 1.8s ease-in-out infinite; }
