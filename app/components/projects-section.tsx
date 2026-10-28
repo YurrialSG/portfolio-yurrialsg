@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
-import { ExternalLink } from "lucide-react"
+import { useEffect, useRef } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Image from "next/image"
+import { ExternalLink } from "lucide-react"
 import { RevealText } from "./RevealText"
-import { useScrollReveal } from "../hooks/useScrollReveal"
 
 const projects = [
   {
@@ -38,128 +38,169 @@ const projects = [
   },
 ]
 
-function ProjectCard({ project, index, onVisible }: {
-  project: typeof projects[number]
-  index: number
-  onVisible: (i: number) => void
-}) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const { ref: imgRef, isInView: imgInView } = useScrollReveal()
+export function ProjectsSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const counterRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    const el = cardRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) onVisible(index) },
-      { threshold: 0.5 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [index, onVisible])
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia()
+
+      mm.add("(min-width: 768px)", () => {
+        const track = trackRef.current
+        const section = sectionRef.current
+        if (!track || !section) return
+
+        const panels = track.querySelectorAll<HTMLElement>(".project-panel")
+
+        gsap.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            pin: true,
+            pinSpacing: true,
+            scrub: 0.8,
+            start: "top top",
+            end: () => `+=${track.scrollWidth - window.innerWidth}`,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const idx = Math.min(
+                Math.floor(self.progress * panels.length),
+                panels.length - 1
+              )
+              if (counterRef.current) {
+                counterRef.current.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(panels.length).padStart(2, "0")}`
+              }
+            },
+          },
+        })
+
+      })
+
+      mm.add("(max-width: 767px)", () => {
+        const panels = document.querySelectorAll<HTMLElement>(".project-panel")
+        gsap.fromTo(
+          panels,
+          { y: 40, opacity: 0 },
+          {
+            y: 0, opacity: 1, stagger: 0.15,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              end: "top 20%",
+              scrub: 0.8,
+            },
+          }
+        )
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <div
-      ref={cardRef}
-      className="grid lg:grid-cols-[60%_40%] min-h-[60vh] lg:min-h-[70vh]"
-    >
-      <motion.div
-        ref={imgRef as React.RefObject<HTMLDivElement>}
-        initial={{ scale: 1.06 }}
-        animate={imgInView ? { scale: 1 } : {}}
-        transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-        className="relative overflow-hidden order-1"
-        style={{ minHeight: "40vh" }}
-      >
-        <Image
-          src={project.image}
-          alt={project.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 60vw"
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: "linear-gradient(to right, transparent 60%, #050505)" }}
-        />
-      </motion.div>
-
-      <motion.div
-        initial={{ x: 32, opacity: 0 }}
-        animate={imgInView ? { x: 0, opacity: 1 } : {}}
-        transition={{ duration: 0.7, delay: 0.2, ease: [0.76, 0, 0.24, 1] }}
-        className="relative flex flex-col justify-center bg-card order-2"
-        style={{ padding: "48px" }}
-      >
-        <span
-          className="absolute top-4 right-4 text-8xl font-black text-foreground select-none pointer-events-none"
-          style={{ opacity: 0.08 }}
-        >
-          {project.number}
-        </span>
-
-        <h3 className="text-2xl font-bold text-foreground mb-3">{project.title}</h3>
-        <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
-        <p className="text-xs text-muted-foreground tracking-wide mb-6">{project.technologies}</p>
-
-        {project.type === "website" ? (
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Ver projeto
-          </a>
-        ) : (
-          <div className="flex gap-6">
-            <a
-              href={project.androidUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Android
-            </a>
-            <a
-              href={project.iosUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              iOS
-            </a>
-          </div>
-        )}
-      </motion.div>
-    </div>
-  )
-}
-
-export function ProjectsSection() {
-  const [activeProject, setActiveProject] = useState(0)
-
-  return (
-    <section id="projects" className="py-16">
-      <div className="max-w-6xl mx-auto px-4 mb-12 flex items-center justify-between">
+    <section ref={sectionRef} id="projects" className="overflow-hidden">
+      <div className="flex justify-between items-center px-6 sm:px-8 py-5 border-b border-border">
         <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary">
           PROJETOS
         </RevealText>
-        <span className="uppercase tracking-widest text-xs text-muted-foreground">
-          {String(activeProject + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+        <span
+          ref={counterRef}
+          className="uppercase tracking-widest text-xs text-muted-foreground tabular-nums"
+        >
+          01 / 03
         </span>
       </div>
 
-      <div className="space-y-px">
-        {projects.map((project, i) => (
-          <ProjectCard
+      <div
+        ref={trackRef}
+        className="flex flex-col md:flex-row"
+        style={{ willChange: "transform" }}
+      >
+        {projects.map((project) => (
+          <div
             key={project.number}
-            project={project}
-            index={i}
-            onVisible={setActiveProject}
-          />
+            className="project-panel flex-shrink-0 flex flex-col md:flex-row w-full md:w-screen md:h-[calc(100vh-57px)]"
+          >
+            <div
+              className="relative overflow-hidden w-full md:w-[65%] flex-shrink-0 h-[50vw] sm:h-64 md:h-full"
+            >
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 65vw"
+              />
+              <div
+                className="absolute inset-0 hidden md:block"
+                style={{ background: "linear-gradient(to right, transparent 50%, #050505 100%)" }}
+              />
+              <div
+                className="absolute inset-0 block md:hidden"
+                style={{ background: "linear-gradient(to bottom, transparent 50%, #0d0d0d 100%)" }}
+              />
+            </div>
+
+            <div
+              className="panel-info relative flex flex-col justify-start md:justify-center bg-card w-full md:w-[35%] flex-shrink-0 p-6 sm:p-8 md:p-10"
+            >
+              <span
+                className="absolute top-4 right-4 md:top-6 md:right-6 text-6xl md:text-7xl lg:text-8xl font-black text-foreground select-none pointer-events-none"
+                style={{ opacity: 0.08 }}
+              >
+                {project.number}
+              </span>
+
+              <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+                {project.title}
+              </h3>
+              <p className="text-muted-foreground mb-4 leading-relaxed text-sm md:text-base">
+                {project.description}
+              </p>
+              <p className="text-xs text-muted-foreground tracking-wide mb-6">
+                {project.technologies}
+              </p>
+
+              {project.type === "website" ? (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Ver projeto
+                </a>
+              ) : (
+                <div className="flex gap-6">
+                  <a
+                    href={project.androidUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Android
+                  </a>
+                  <a
+                    href={project.iosUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    iOS
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
         ))}
       </div>
     </section>

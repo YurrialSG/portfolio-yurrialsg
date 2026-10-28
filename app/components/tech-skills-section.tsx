@@ -1,8 +1,9 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useRef, useEffect } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { RevealText } from "./RevealText"
-import { useScrollReveal } from "../hooks/useScrollReveal"
 
 const groups = [
   {
@@ -20,17 +21,55 @@ const groups = [
 ]
 
 export function TechSkillsSection() {
-  const { ref: groupsRef, isInView: groupsInView } = useScrollReveal()
-  const { ref: lineRef, isInView: lineInView } = useScrollReveal()
+  const sectionRef = useRef<HTMLElement>(null)
+  const groupsRef = useRef<HTMLDivElement>(null)
+  const lineRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".stack-group",
+        { x: -30, opacity: 0 },
+        {
+          x: 0, opacity: 1, stagger: 0.15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: groupsRef.current,
+            start: "top 82%",
+            end: "top 35%",
+            scrub: 0.5,
+          },
+        }
+      )
+
+      gsap.fromTo(
+        lineRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: lineRef.current,
+            start: "top 90%",
+            end: "top 65%",
+            scrub: 0.5,
+          },
+        }
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section id="skills" className="py-32 px-4">
+    <section id="skills" ref={sectionRef} className="py-16 md:py-32 px-4">
       <div className="max-w-6xl mx-auto">
-        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary mb-12 block">
+        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary mb-6 md:mb-12 block">
           STACK
         </RevealText>
 
-        <RevealText direction="y" delay={0.1} className="font-black text-5xl lg:text-6xl leading-tight mb-16 block">
+        <RevealText direction="y" delay={0.1} className="font-black text-4xl md:text-5xl lg:text-6xl leading-tight mb-8 md:mb-16 block">
           As ferramentas
           <br />
           com que
@@ -38,34 +77,23 @@ export function TechSkillsSection() {
           trabalho
         </RevealText>
 
-        <div
-          ref={groupsRef as React.RefObject<HTMLDivElement>}
-          className="flex flex-wrap gap-16"
-        >
-          {groups.map((group, i) => (
-            <motion.div
-              key={group.name}
-              initial={{ x: -24, opacity: 0 }}
-              animate={groupsInView ? { x: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.76, 0, 0.24, 1] }}
-            >
+        <div ref={groupsRef} className="flex flex-wrap gap-8 md:gap-16">
+          {groups.map((group) => (
+            <div key={group.name} className="stack-group">
               <p className="uppercase tracking-widest text-xs text-muted-foreground mb-3">
                 {group.name}
               </p>
-              <p className="text-foreground text-lg max-w-xs">
+              <p className="text-foreground text-sm md:text-base lg:text-lg max-w-xs">
                 {group.items}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          ref={lineRef as React.RefObject<HTMLDivElement>}
-          initial={{ scaleX: 0 }}
-          animate={lineInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+        <div
+          ref={lineRef}
+          className="w-full h-px bg-primary mt-8 md:mt-16"
           style={{ transformOrigin: "left" }}
-          className="w-full h-px bg-primary mt-16"
         />
       </div>
     </section>

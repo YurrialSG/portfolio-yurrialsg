@@ -16,15 +16,15 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="py-32 px-4"
+      className="py-16 md:py-32 px-4"
       style={{ background: "linear-gradient(to bottom, #050505, #0a0804)" }}
     >
       <div className="max-w-3xl mx-auto text-center">
-        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary mb-8 block">
+        <RevealText delay={0} className="uppercase tracking-widest text-xs text-primary mb-5 md:mb-8 block">
           CONTATO
         </RevealText>
 
-        <RevealText direction="y" delay={0.1} className="font-black text-5xl lg:text-6xl leading-tight mb-6 block">
+        <RevealText direction="y" delay={0.1} className="font-black text-4xl md:text-5xl lg:text-6xl leading-tight mb-4 md:mb-6 block">
           Vamos trabalhar juntos.
         </RevealText>
 
@@ -33,7 +33,7 @@ export function ContactSection() {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-muted-foreground mb-12"
+          className="text-muted-foreground mb-8 md:mb-12"
         >
           Aberto a projetos freelance e posições CLT/PJ.
         </motion.p>
@@ -46,14 +46,14 @@ export function ContactSection() {
         >
           <a
             href="mailto:yuriinternacional86@gmail.com"
-            className="group relative inline-block text-xl lg:text-2xl text-foreground"
+            className="group relative inline-block text-sm sm:text-base md:text-xl lg:text-2xl text-foreground"
           >
             yuriinternacional86@gmail.com
             <span className="absolute bottom-0 left-0 h-px bg-primary w-0 group-hover:w-full transition-all duration-500" />
           </a>
         </motion.div>
 
-        <div className="w-24 h-px bg-border mx-auto my-10" />
+        <div className="w-24 h-px bg-border mx-auto my-6 md:my-10" />
 
         <div
           ref={bottomRef as React.RefObject<HTMLDivElement>}

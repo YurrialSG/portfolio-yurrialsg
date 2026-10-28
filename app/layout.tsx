@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
 import "./globals.css";
 import { Navigation } from "./components/navigation";
-
 export const metadata: Metadata = {
   title: "Yuri Silveira - Engenheiro de Software",
   description:
